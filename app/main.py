@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-# from .routers import item, admin, user, auth, cart, stat
-# from . import models
+from .routers import admin
+from . import models
 from .database import engine
 
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="TravelSense-API",
@@ -23,12 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.include_router(item.router)
-# app.include_router(admin.router)
-# app.include_router(user.router)
-# app.include_router(auth.router)
-# app.include_router(cart.router)
-# app.include_router(stat.router)
+app.include_router(admin.router)
 
 
 @app.get("/")
