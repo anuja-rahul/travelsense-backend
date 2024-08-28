@@ -19,7 +19,7 @@ class Category(Base):
 class SubCategory(Base):
     __tablename__ = 'subcategories'
 
-    category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
+    category_id = Column(Integer, ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)
     id = Column(Integer, primary_key=True, nullable=False)
     title = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=False)
@@ -38,6 +38,18 @@ class User(Base):
     password = Column(String, nullable=False)
     verified = Column(Boolean, nullable=False, server_default="False")
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+
+
+class UserCategory(Base):
+    __tablename__ = 'user_categories'
+
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    category_id = Column(Integer, ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)
+    sub_category_id = Column(Integer, ForeignKey("subcategories.id", ondelete="CASCADE"), nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+    user = relationship("User")
+    category = relationship("Category")
+    sub_category = relationship("SubCategory")
 
 
 class Admin(Base):
