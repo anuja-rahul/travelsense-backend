@@ -34,3 +34,36 @@ class AdminOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UserCreate(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    password: Optional[str] = None
+
+
+# class UserUpdate(BaseModel):
+#     name: Optional[str]
+#     email: Optional[EmailStr]
+#     password: Optional[str]
+
+
+class UserOut(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    verified: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
