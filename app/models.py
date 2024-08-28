@@ -16,6 +16,19 @@ class Category(Base):
     admin = relationship("Admin")
 
 
+class SubCategory(Base):
+    __tablename__ = 'subcategories'
+
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
+    title = Column(String, nullable=False, unique=True)
+    description = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+    added_by = Column(Integer, ForeignKey("admins.id"), nullable=False, server_default="1")
+    admin = relationship("Admin")
+    category = relationship("Category")
+
+
 class User(Base):
     __tablename__ = "users"
 
