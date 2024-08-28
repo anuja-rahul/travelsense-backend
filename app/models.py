@@ -28,6 +28,10 @@ class SubCategory(Base):
     admin = relationship("Admin")
     category = relationship("Category")
 
+    __table_args__ = (
+        PrimaryKeyConstraint('id', 'category_id', name='sub_category_pk'),
+    )
+
 
 class User(Base):
     __tablename__ = "users"
@@ -50,6 +54,10 @@ class UserCategory(Base):
     user = relationship("User")
     category = relationship("Category")
     sub_category = relationship("SubCategory")
+
+    __table_args__ = (
+        PrimaryKeyConstraint('user_id', 'category_id', 'sub_category_id', name='user_category_pk'),
+    )
 
 
 class Admin(Base):
