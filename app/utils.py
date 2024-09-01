@@ -11,7 +11,7 @@ def verify(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 
-# Imagine these categories are given to you as follows in JSON format
+# Imagine these categories are given to you as follows in JSON format ------------------------------------------------
 
 districts = {
     [
