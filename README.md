@@ -33,6 +33,7 @@
 ## Database Table Structure
 
 ```mermaid
+
 erDiagram
     Category {
         Integer id PK
@@ -149,6 +150,7 @@ erDiagram
     User ||--o| UserItinerary : has
     Itinerary ||--o| District : belongs_to
     Itinerary ||--o| Admin : created_by
+    Itinerary ||--o| UserItinerary : linked_to
     ItineraryActivity ||--o| Itinerary : includes
     ItineraryActivity ||--o| Activity : includes
     ItineraryHotelRestaurant ||--o| Itinerary : includes
@@ -157,101 +159,184 @@ erDiagram
     ItineraryTransportation ||--o| Transportation : includes
     ItineraryAttraction ||--o| Itinerary : includes
     ItineraryAttraction ||--o| Attraction : includes
-
+    
 
 ```
 
 ---
 
-## Models Overview
+## Models(Tables) Overview
 
 ### **Category**
 - **Purpose**: Represents different categories of items or topics.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `title`: String
+  - `description`: String
+  - `created_at`: TIMESTAMP
+  - `added_by`: Integer (Foreign Key to `Admin`)
 - **Relationships**: 
   - Linked to `Admin` (who added the category).
 
 ### **Province**
 - **Purpose**: Represents geographical provinces.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `title`: String
+  - `description`: String
+  - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Has many `Districts`.
 
 ### **District**
 - **Purpose**: Represents smaller geographical areas within a province.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `province_id`: Integer (Foreign Key to `Province`)
+  - `title`: String
+  - `description`: String
+  - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `Province` (each district belongs to one province).
   - Has many `Activities`, `HotelsAndRestaurants`, `Transportation`, and `Attractions`.
 
 ### **Activity**
 - **Purpose**: Represents various activities that can be done in a district.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `district_id`: Integer (Foreign Key to `District`)
+  - `title`: String
+  - `description`: String
+  - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each activity is in one district).
   - Associated with itineraries through `ItineraryActivity`.
 
 ### **HotelsAndRestaurant**
 - **Purpose**: Represents hotels and restaurants in a district.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `district_id`: Integer (Foreign Key to `District`)
+  - `type`: String
+  - `cuisine`: String
+  - `comfort`: String
+  - `title`: String
+  - `description`: String
+  - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each hotel/restaurant is in one district).
   - Associated with itineraries through `ItineraryHotelRestaurant`.
 
 ### **Transportation**
 - **Purpose**: Represents transportation options within a district.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `district_id`: Integer (Foreign Key to `District`)
+  - `type`: String
+  - `origin`: String
+  - `destination`: String
+  - `description`: String
+  - `departure`: String
+  - `arrival`: String
+  - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each transportation option is in one district).
   - Associated with itineraries through `ItineraryTransportation`.
 
 ### **Attraction**
 - **Purpose**: Represents tourist attractions in a district.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `district_id`: Integer (Foreign Key to `District`)
+  - `type`: String
+  - `title`: String
+  - `description`: String
+  - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each attraction is in one district).
   - Associated with itineraries through `ItineraryAttraction`.
 
 ### **User**
 - **Purpose**: Represents the users of the application.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `name`: String
+  - `email`: String
+  - `password`: String
+  - `verified`: Boolean
+  - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Can have `UserItineraries` (if you choose to implement user-specific itineraries).
 
 ### **UserItinerary**
-- **Purpose**: (Currently not used) Links users to itineraries, allowing users to have personal itineraries.
+- **Purpose**: Links users to itineraries, allowing users to have personal itineraries.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `user_id`: Integer (Foreign Key to `User`)
 - **Relationships**: 
   - Linked to `User` (each itinerary belongs to a user).
+  - Can be linked to multiple `Itineraries`, but this relationship is optional.
 
 ### **Itinerary**
-- **Purpose**: Represents a planned itinerary which includes activities, hotels/restaurants, transportation, and attractions for a specific district.
+- **Purpose**: Represents a planned itinerary that includes activities, hotels/restaurants, transportation, and attractions for a specific district.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `district_id`: Integer (Foreign Key to `District`)
+  - `admin_id`: Integer (Foreign Key to `Admin`)
+  - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each itinerary is for one district).
   - Linked to `Admin` (each itinerary is created by an admin).
+  - Optionally linked to a `UserItinerary`.
   - Has many `Activities`, `HotelsAndRestaurants`, `Transportations`, and `Attractions` through their respective models.
 
 ### **ItineraryActivity**
 - **Purpose**: Links activities to specific itineraries.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `itinerary_id`: Integer (Foreign Key to `Itinerary`)
+  - `activity_id`: Integer (Foreign Key to `Activity`)
 - **Relationships**: 
   - Linked to `Itinerary` (each record associates an activity with an itinerary).
   - Linked to `Activity` (each record specifies which activity is included in the itinerary).
 
 ### **ItineraryHotelRestaurant**
 - **Purpose**: Links hotels and restaurants to specific itineraries.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `itinerary_id`: Integer (Foreign Key to `Itinerary`)
+  - `hotel_restaurant_id`: Integer (Foreign Key to `HotelsAndRestaurant`)
 - **Relationships**: 
   - Linked to `Itinerary` (each record associates a hotel/restaurant with an itinerary).
   - Linked to `HotelsAndRestaurant` (each record specifies which hotel/restaurant is included in the itinerary).
 
 ### **ItineraryTransportation**
 - **Purpose**: Links transportation options to specific itineraries.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `itinerary_id`: Integer (Foreign Key to `Itinerary`)
+  - `transportation_id`: Integer (Foreign Key to `Transportation`)
 - **Relationships**: 
   - Linked to `Itinerary` (each record associates a transportation option with an itinerary).
   - Linked to `Transportation` (each record specifies which transportation option is included in the itinerary).
 
 ### **ItineraryAttraction**
 - **Purpose**: Links attractions to specific itineraries.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `itinerary_id`: Integer (Foreign Key to `Itinerary`)
+  - `attraction_id`: Integer (Foreign Key to `Attraction`)
 - **Relationships**: 
   - Linked to `Itinerary` (each record associates an attraction with an itinerary).
   - Linked to `Attraction` (each record specifies which attraction is included in the itinerary).
 
 ### **Admin**
 - **Purpose**: Represents the administrators of the system.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `name`: String
+  - `email`: String
+  - `password`: String
+  - `created_at`: TIMESTAMP
 - **Relationships**: 
-  - Can manage `Categories`, `SubCategories`, and `Itineraries`.
-
-
-
-
-
+  - Can manage `Categories` and `Itineraries`.

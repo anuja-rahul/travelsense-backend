@@ -144,26 +144,26 @@ class User(Base):
 class UserItinerary(Base):
     __tablename__ = "user_itineraries"
 
-    id = Column(Integer, nullable=False)
+    id = Column(Integer, nullable=False, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
     user = relationship("User", back_populates="itineraries")
 
-    __table_args__ = (
-        PrimaryKeyConstraint('id', 'user_id', name='user_itinerary_pk'),
-    )
+    # __table_args__ = (
+    #     PrimaryKeyConstraint('id', 'user_id', name='user_itinerary_pk'),
+    # )
 
 
 class Itinerary(Base):
     __tablename__ = 'itineraries'
 
     id = Column(Integer, primary_key=True, nullable=False)
+    user_itinerary_id = Column(Integer, ForeignKey("user_itineraries.id", ondelete="CASCADE"), nullable=True)
     district_id = Column(Integer, ForeignKey("districts.id", ondelete="CASCADE"), nullable=False)
-    admin_id = Column(Integer, ForeignKey("admins.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
 
     district = relationship("District")
-    admin = relationship("Admin")
+    user_itinerary = relationship("UserItinerary", backref="itineraries")
     activities = relationship("ItineraryActivity", backref="itinerary")
     hotels_and_restaurants = relationship("ItineraryHotelRestaurant", backref="itinerary")
     transportations = relationship("ItineraryTransportation", backref="itinerary")
