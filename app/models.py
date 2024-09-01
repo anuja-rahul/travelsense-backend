@@ -159,9 +159,11 @@ class Itinerary(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     district_id = Column(Integer, ForeignKey("districts.id", ondelete="CASCADE"), nullable=False)
+    admin_id = Column(Integer, ForeignKey("admins.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
 
     district = relationship("District")
+    admin = relationship("Admin")
     activities = relationship("ItineraryActivity", backref="itinerary")
     hotels_and_restaurants = relationship("ItineraryHotelRestaurant", backref="itinerary")
     transportations = relationship("ItineraryTransportation", backref="itinerary")
