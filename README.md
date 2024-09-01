@@ -112,6 +112,7 @@ erDiagram
     Itinerary {
         Integer id PK
         Integer district_id FK
+        Integer admin_id FK
         TIMESTAMP created_at
     }
     ItineraryActivity {
@@ -147,6 +148,7 @@ erDiagram
     Attraction ||--o| District : belongs_to
     User ||--o| UserItinerary : has
     Itinerary ||--o| District : belongs_to
+    Itinerary ||--o| Admin : created_by
     ItineraryActivity ||--o| Itinerary : includes
     ItineraryActivity ||--o| Activity : includes
     ItineraryHotelRestaurant ||--o| Itinerary : includes
@@ -155,6 +157,7 @@ erDiagram
     ItineraryTransportation ||--o| Transportation : includes
     ItineraryAttraction ||--o| Itinerary : includes
     ItineraryAttraction ||--o| Attraction : includes
+
 
 ```
 
@@ -216,6 +219,7 @@ erDiagram
 - **Purpose**: Represents a planned itinerary which includes activities, hotels/restaurants, transportation, and attractions for a specific district.
 - **Relationships**: 
   - Linked to `District` (each itinerary is for one district).
+  - Linked to `Admin` (each itinerary is created by an admin).
   - Has many `Activities`, `HotelsAndRestaurants`, `Transportations`, and `Attractions` through their respective models.
 
 ### **ItineraryActivity**
@@ -245,7 +249,8 @@ erDiagram
 ### **Admin**
 - **Purpose**: Represents the administrators of the system.
 - **Relationships**: 
-  - Can manage `Categories` and `SubCategories`.
+  - Can manage `Categories`, `SubCategories`, and `Itineraries`.
+
 
 
 
