@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, PrimaryKeyConstraint, Numeric
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, PrimaryKeyConstraint, Numeric, Index
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
 from sqlalchemy.orm import relationship
@@ -36,6 +36,10 @@ class District(Base):
     province = relationship("Province")
 
     # __table_args__ = (
+    #     Index('idx_district_title', 'title'),
+    # )
+
+    # __table_args__ = (
     #     PrimaryKeyConstraint('id', 'province_id', name='districts_pk'),
     # )
 
@@ -55,7 +59,7 @@ class Activity(Base):
     #     )
 
 
-class HotelsAndRestaurants(Base):
+class HotelsAndRestaurant(Base):
     __tablename__ = 'hotels_and_restaurants'
 
     id = Column(Integer, primary_key=True, nullable=False)
