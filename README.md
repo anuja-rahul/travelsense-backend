@@ -112,8 +112,8 @@ erDiagram
     }
     Itinerary {
         Integer id PK
+        Integer user_itinerary_id FK
         Integer district_id FK
-        Integer admin_id FK
         TIMESTAMP created_at
     }
     ItineraryActivity {
@@ -149,7 +149,6 @@ erDiagram
     Attraction ||--o| District : belongs_to
     User ||--o| UserItinerary : has
     Itinerary ||--o| District : belongs_to
-    Itinerary ||--o| Admin : created_by
     Itinerary ||--o| UserItinerary : linked_to
     ItineraryActivity ||--o| Itinerary : includes
     ItineraryActivity ||--o| Activity : includes
@@ -159,6 +158,7 @@ erDiagram
     ItineraryTransportation ||--o| Transportation : includes
     ItineraryAttraction ||--o| Itinerary : includes
     ItineraryAttraction ||--o| Attraction : includes
+
     
 
 ```
