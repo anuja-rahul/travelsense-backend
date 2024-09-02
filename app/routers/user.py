@@ -11,13 +11,13 @@ router = APIRouter(
     tags=["Users"]
 )
 
-user_header_scheme = APIKeyHeader(name="user_token")
+user_header_scheme = APIKeyHeader(name="admin_token")
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), key: str = Depends(user_header_scheme)):
 
-    if key == settings.USER_TOKEN:
+    if key == settings.ADMIN_TOKEN:
         try:
             hashed_password = utils.hash(user.password)
             user.password = hashed_password
@@ -37,7 +37,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), key: st
 
 @router.get("/{id}", response_model=schemas.UserOut)
 def get_user(id: int, db: Session = Depends(get_db), key: str = Depends(user_header_scheme)):
-    if key == settings.USER_TOKEN:
+    if key == settings.ADMIN_TOKEN:
         user = db.query(models.User).filter(id == models.User.id).first()
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"user with id: {id} was not found")
@@ -49,7 +49,7 @@ def get_user(id: int, db: Session = Depends(get_db), key: str = Depends(user_hea
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(id: int, db: Session = Depends(get_db), key: str = Depends(user_header_scheme)):
-    if key == settings.USER_TOKEN:
+    if key == settings.ADMIN_TOKEN:
         user_query = db.query(models.User).filter(id == models.User.id)
         user = user_query.first()
 
@@ -69,7 +69,7 @@ def delete_user(id: int, db: Session = Depends(get_db), key: str = Depends(user_
 def update_user(id: int, updated_user: schemas.UserCreate, db: Session = Depends(get_db),
                 key: str = Depends(user_header_scheme)):
 
-    if key == settings.USER_TOKEN:
+    if key == settings.ADMIN_TOKEN:
         hashed_password = utils.hash(updated_user.password)
         updated_user.password = hashed_password
         user_query = db.query(models.User).filter(id == models.User.id)
