@@ -53,12 +53,18 @@ class UserUpdate(BaseModel):
 #     password: Optional[str]
 
 
+class UserItineraryBase(BaseModel):
+    id: int
+    user_id: int
+
+
 class UserOut(BaseModel):
     id: int
     name: str
     email: EmailStr
     verified: bool
     created_at: datetime
+    itineraries: List[UserItineraryBase]
 
     class Config:
         from_attributes = True
