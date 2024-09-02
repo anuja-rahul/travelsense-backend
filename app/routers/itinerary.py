@@ -12,4 +12,6 @@ router = APIRouter(
 )
 
 
-
+@router.get("/")
+def get_itineraries():
+    pass
