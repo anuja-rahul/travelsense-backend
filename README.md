@@ -148,6 +148,7 @@ erDiagram
     Transportation ||--o| District : belongs_to
     Attraction ||--o| District : belongs_to
     User ||--o| UserItinerary : has
+    UserItinerary ||--o| Itinerary : includes
     Itinerary ||--o| District : belongs_to
     Itinerary ||--o| UserItinerary : linked_to
     ItineraryActivity ||--o| Itinerary : includes
@@ -159,13 +160,11 @@ erDiagram
     ItineraryAttraction ||--o| Itinerary : includes
     ItineraryAttraction ||--o| Attraction : includes
 
-    
-
 ```
 
 ---
 
-## Models(Tables) Overview
+## Models (Tables) Overview
 
 ### **Category**
 - **Purpose**: Represents different categories of items or topics.
@@ -281,12 +280,11 @@ erDiagram
 - **Purpose**: Represents a planned itinerary that includes activities, hotels/restaurants, transportation, and attractions for a specific district.
 - **Fields**:
   - `id`: Integer (Primary Key)
+  - `user_itinerary_id`: Integer (Foreign Key to `UserItinerary`)
   - `district_id`: Integer (Foreign Key to `District`)
-  - `admin_id`: Integer (Foreign Key to `Admin`)
   - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each itinerary is for one district).
-  - Linked to `Admin` (each itinerary is created by an admin).
   - Optionally linked to a `UserItinerary`.
   - Has many `Activities`, `HotelsAndRestaurants`, `Transportations`, and `Attractions` through their respective models.
 
