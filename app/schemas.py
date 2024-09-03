@@ -194,6 +194,14 @@ class ActivityCreate(BaseModel):
     description: str
 
 
+class ActivityOut(BaseModel):
+    district_id: int
+    title: str
+    description: str
+    created_at: datetime
+    district: DistrictBase
+
+
 class HotelsAndRestaurantsCreate(BaseModel):
     district_id: int
     type: str

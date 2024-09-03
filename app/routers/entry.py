@@ -48,7 +48,7 @@ def get_entries(entry: schemas.EntryBase, db: Session = Depends(get_db), key: st
 
 
 @router.post("/provinces", status_code=status.HTTP_201_CREATED, response_model=schemas.ProvinceBase)
-def add_provinces(entry: schemas.ProvinceCreate,  db: Session = Depends(get_db), key: str = Depends(user_header_scheme)):
+def add_provinces(entry: schemas.ProvinceCreate, db: Session = Depends(get_db), key: str = Depends(user_header_scheme)):
     if key == settings.ADMIN_TOKEN:
         try:
             new_province = models.Province(**entry.model_dump())
@@ -65,7 +65,7 @@ def add_provinces(entry: schemas.ProvinceCreate,  db: Session = Depends(get_db),
 
 
 @router.post("/districts", status_code=status.HTTP_201_CREATED, response_model=schemas.DistrictBase)
-def add_districts(entry: schemas.DistrictCreate,  db: Session = Depends(get_db),
+def add_districts(entry: schemas.DistrictCreate, db: Session = Depends(get_db),
                   key: str = Depends(user_header_scheme)):
     if key == settings.ADMIN_TOKEN:
         try:
@@ -74,6 +74,24 @@ def add_districts(entry: schemas.DistrictCreate,  db: Session = Depends(get_db),
             db.commit()
             db.refresh(new_district)
             return new_district
+        except IntegrityError:
+            raise HTTPException(status_code=status.HTTP_226_IM_USED, detail="already exists")
+
+    else:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=f"You are not authorized to perform this action")
+
+
+@router.post("/activities", status_code=status.HTTP_201_CREATED, response_model=schemas.ActivityOut)
+def add_activity(entry: schemas.ActivityCreate, db: Session = Depends(get_db),
+                 key: str = Depends(user_header_scheme)):
+    if key == settings.ADMIN_TOKEN:
+        try:
+            new_activity = models.Activity(**entry.model_dump())
+            db.add(new_activity)
+            db.commit()
+            db.refresh(new_activity)
+            return new_activity
         except IntegrityError:
             raise HTTPException(status_code=status.HTTP_226_IM_USED, detail="already exists")
 
