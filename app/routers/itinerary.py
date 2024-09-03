@@ -28,3 +28,8 @@ def get_itinerary(db: Session = Depends(get_db), current_user: int = Depends(oau
                             detail=f"This user has no itineraries.")
 
     return itineraries
+
+
+@router.post("/")
+def create_itinerary(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    pass

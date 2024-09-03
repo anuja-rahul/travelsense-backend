@@ -2,8 +2,6 @@ from typing import Optional, Literal, List, Any
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 
-from app.models import Province
-
 
 class Token(BaseModel):
     access_token: str
@@ -80,6 +78,56 @@ class ItineraryActivityBase(BaseModel):
     activity: ActivityBase
 
 
+class HotelRestaurantBase(BaseModel):
+    id: int
+    type: str
+    cuisine: str
+    comfort: str
+    title: str
+    description: str
+    created_at: datetime
+
+
+class ItineraryHotelRestaurantsBase(BaseModel):
+    id: int
+    itinerary_id: int
+    hotel_restaurant_id: int
+    hotel_restaurant: HotelRestaurantBase
+
+
+class TransportationBase(BaseModel):
+    id: int
+    type: Optional[str]
+    origin: Optional[str]
+    destination: Optional[str]
+    description: Optional[str]
+    departure: Optional[str]
+    arrival: Optional[str]
+    created_at: datetime
+
+
+class ItineraryTransportationBase(BaseModel):
+    id: int
+    itinerary_id: int
+    transportation_id: int
+    transportation: TransportationBase
+
+
+class AttractionsBase(BaseModel):
+    id: int
+    type: str
+    title: str
+    description: str
+    created_at: datetime
+
+
+class ItineraryAttractionsBase(BaseModel):
+    id: int
+    itinerary_id: int
+    attraction_id: int
+    attraction: AttractionsBase
+
+
 class ItineraryBase(BaseModel):
     id: int
     user_itinerary_id: int
@@ -90,9 +138,9 @@ class ItineraryBase(BaseModel):
 class ItineraryOut(ItineraryBase):
     district: DistrictBase
     activities: List[ItineraryActivityBase]
-    # hotels_and_restaurants: Any
-    # transportation: List[Any]
-    # attractions: List[Any]
+    hotels_and_restaurants: List[ItineraryHotelRestaurantsBase]
+    transportations: List[ItineraryTransportationBase]
+    attractions: List[ItineraryAttractionsBase]
 
 
 class UserItineraryBase(BaseModel):
