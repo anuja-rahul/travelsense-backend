@@ -206,7 +206,7 @@ class HotelsAndRestaurantsCreate(BaseModel):
     district_id: int
     type: str
     cuisine: str
-    comfort: Literal["*", "**", "***", "****", "*****", "******", "*******"]
+    comfort: Literal["1", "2", "3", "4", "5"]
     title: str
     description: str
 
