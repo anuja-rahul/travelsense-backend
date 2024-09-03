@@ -60,7 +60,6 @@ class DistrictBase(BaseModel):
     title: str
     description: str
     created_at: datetime
-
     province: ProvinceBase
 
 
@@ -168,3 +167,55 @@ class UserItineraryOut(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+
+class EntryBase(BaseModel):
+    category: Literal[
+        "transportations", "attractions", "activities", "hotels_and_restaurants", "districts", "provinces"]
+
+
+# Creating schemas ---------------------------------------------------------------------------------------------------
+
+
+class ProvinceCreate(BaseModel):
+    title: str
+    description: str
+
+
+class DistrictCreate(BaseModel):
+    province_id: int
+    title: str
+    description: str
+
+
+class ActivityCreate(BaseModel):
+    district_id: int
+    title: str
+    description: str
+
+
+class HotelsAndRestaurantsCreate(BaseModel):
+    district_id: int
+    type: str
+    cuisine: str
+    comfort: Literal["*", "**", "***", "****", "*****", "******", "*******"]
+    title: str
+    description: str
+
+
+class TransportationCreate(BaseModel):
+    district_id: int
+    type: Literal["Bus", "Threewheeler", "bicycle", "motorcycle", "car", "train", "boat"]
+    origin: Optional[str]
+    destination: Optional[str]
+    description: Optional[str]
+    departure: Optional[str]
+    arrival: Optional[str]
+
+
+class AttractionsCreate(BaseModel):
+    district_id: int
+    type: str
+    title: str
+    description: str
+

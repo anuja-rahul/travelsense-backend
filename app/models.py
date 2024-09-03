@@ -78,7 +78,7 @@ class Transportation(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     district_id = Column(Integer, ForeignKey("districts.id", ondelete="CASCADE"), nullable=False)
-    type = Column(String, nullable=True)
+    type = Column(String, nullable=False)
     origin = Column(String, nullable=True)
     destination = Column(String, nullable=True)
     description = Column(String, nullable=True)
