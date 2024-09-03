@@ -1,6 +1,6 @@
 from ..database import get_db
 from sqlalchemy.orm import Session
-from .. import models, schemas, utils
+from .. import models, schemas, utils, oauth2
 from fastapi import status, HTTPException, Depends, APIRouter, Response
 from fastapi.security import APIKeyHeader
 from ..config import settings
@@ -35,52 +35,45 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), key: st
                             detail=f"You are not authorized to perform this action")
 
 
-@router.get("/{id}", response_model=schemas.UserOut)
-def get_user(id: int, db: Session = Depends(get_db), key: str = Depends(user_header_scheme)):
-    if key == settings.ADMIN_TOKEN:
-        user = db.query(models.User).filter(id == models.User.id).first()
-        if not user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"user with id: {id} was not found")
-        return user
-    else:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail=f"You are not authorized to perform this action")
+@router.get("/", response_model=schemas.UserOut)
+def get_user(current_user: int = Depends(oauth2.get_current_user), db: Session = Depends(get_db)):
+
+    user = db.query(models.User).filter(current_user.id == models.User.id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"user with id: {current_user.id} was not found")
+    return user
 
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(id: int, db: Session = Depends(get_db), key: str = Depends(user_header_scheme)):
-    if key == settings.ADMIN_TOKEN:
-        user_query = db.query(models.User).filter(id == models.User.id)
-        user = user_query.first()
+@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
 
-        if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: [{id}] does not exist")
+    user_query = db.query(models.User).filter(current_user.id == models.User.id)
+    user = user_query.first()
 
-        user_query.delete(synchronize_session=False)
-        db.commit()
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"User with id: [{current_user.id}] does not exist")
 
-    else:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail=f"You are not authorized to perform this action")
+    user_query.delete(synchronize_session=False)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.put("/{id}", response_model=schemas.UserOut)
-def update_user(id: int, updated_user: schemas.UserCreate, db: Session = Depends(get_db),
-                key: str = Depends(user_header_scheme)):
+@router.put("/", response_model=schemas.UserOut)
+def update_user(updated_user: schemas.UserUpdate, db: Session = Depends(get_db),
+                current_user: int = Depends(oauth2.get_current_user)):
 
-    if key == settings.ADMIN_TOKEN:
-        hashed_password = utils.hash(updated_user.password)
-        updated_user.password = hashed_password
-        user_query = db.query(models.User).filter(id == models.User.id)
-        user = user_query.first()
+    hashed_password = utils.hash(updated_user.password)
+    updated_user.password = hashed_password
+    user_query = db.query(models.User).filter(current_user.id == models.User.id)
+    user = user_query.first()
 
-        if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"user with id: [{id}] does not exist")
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"user with id: [{current_user.id}] does not exist")
 
-        user_query.update(updated_user.model_dump(), synchronize_session=False)
-        db.commit()
-        return user_query.first()
-    else:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail=f"You are not authorized to perform this action")
+    user_query.update(updated_user.model_dump(), synchronize_session=False)
+    db.commit()
+    return user_query.first()
+

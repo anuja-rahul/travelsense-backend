@@ -46,11 +46,11 @@ def create_admin(admin: schemas.AdminCreate, db: Session = Depends(get_db), key:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Invalid Credentials")
 
 
-@router.get("/{id}", response_model=schemas.AdminOut, status_code=status.HTTP_200_OK)
-def get_admin(id: int, db: Session = Depends(get_db), admin_user: int = Depends(oauth2.get_current_admin)):
-    admin = db.query(models.Admin).filter(id == models.Admin.id).first()
+@router.get("/", response_model=schemas.AdminOut, status_code=status.HTTP_200_OK)
+def get_admin(db: Session = Depends(get_db), admin_user: int = Depends(oauth2.get_current_admin)):
+    admin = db.query(models.Admin).filter(admin_user.id == models.Admin.id).first()
     if not admin:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"admin with id: {id} was not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"admin with id: {admin_user.id} was not found")
     if admin_user.id != admin.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail=f"You are not authorized to perform this action")

@@ -79,8 +79,8 @@ class Transportation(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     district_id = Column(Integer, ForeignKey("districts.id", ondelete="CASCADE"), nullable=False)
     type = Column(String, nullable=False)
-    origin = Column(String, nullable=False)
-    destination = Column(String, nullable=False)
+    origin = Column(String, nullable=True)
+    destination = Column(String, nullable=True)
     description = Column(String, nullable=True)
     departure = Column(String, nullable=True)
     arrival = Column(String, nullable=True)
@@ -135,7 +135,7 @@ class Itinerary(Base):
     __tablename__ = 'itineraries'
 
     id = Column(Integer, primary_key=True, nullable=False)
-    user_itinerary_id = Column(Integer, ForeignKey("user_itineraries.id", ondelete="CASCADE"), nullable=True)
+    user_itinerary_id = Column(Integer, ForeignKey("user_itineraries.id", ondelete="CASCADE"), nullable=False)
     district_id = Column(Integer, ForeignKey("districts.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
 
