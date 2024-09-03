@@ -1,6 +1,8 @@
-from typing import Optional, Literal, List
+from typing import Optional, Literal, List, Any
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
+
+from app.models import Province
 
 
 class Token(BaseModel):
@@ -43,14 +45,54 @@ class UserCreate(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    name: Optional[str] = None
-    password: Optional[str] = None
+    name: Optional[str]
+    password: Optional[str]
 
 
-# class UserUpdate(BaseModel):
-#     name: Optional[str]
-#     email: Optional[EmailStr]
-#     password: Optional[str]
+class ProvinceBase(BaseModel):
+    id: int
+    title: str
+    description: str
+    created_at: datetime
+
+
+class DistrictBase(BaseModel):
+    id: int
+    province_id: int
+    title: str
+    description: str
+    created_at: datetime
+
+    province: ProvinceBase
+
+
+class ActivityBase(BaseModel):
+    id: int
+    title: str
+    description: str
+    created_at: datetime
+
+
+class ItineraryActivityBase(BaseModel):
+    id: int
+    itinerary_id: int
+    activity_id: int
+    activity: ActivityBase
+
+
+class ItineraryBase(BaseModel):
+    id: int
+    user_itinerary_id: int
+    district_id: int
+    created_at: datetime
+
+
+class ItineraryOut(ItineraryBase):
+    district: DistrictBase
+    activities: List[ItineraryActivityBase]
+    # hotels_and_restaurants: Any
+    # transportation: List[Any]
+    # attractions: List[Any]
 
 
 class UserItineraryBase(BaseModel):
@@ -68,6 +110,11 @@ class UserOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UserItineraryOut(BaseModel):
+    id: int
+    itineraries: List[ItineraryOut]
 
 
 class UserLogin(BaseModel):
