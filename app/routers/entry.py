@@ -83,7 +83,7 @@ def add_districts(entry: schemas.DistrictCreate, db: Session = Depends(get_db),
 
 
 @router.post("/activities", status_code=status.HTTP_201_CREATED, response_model=schemas.ActivityOut)
-def add_activity(entry: schemas.ActivityCreate, db: Session = Depends(get_db),
+def add_activities(entry: schemas.ActivityCreate, db: Session = Depends(get_db),
                  key: str = Depends(user_header_scheme)):
     if key == settings.ADMIN_TOKEN:
         try:
