@@ -141,6 +141,8 @@ class ItineraryBase(BaseModel):
 
 
 class ItineraryOut(ItineraryBase):
+    id: int
+    user_itinerary_id: int
     district: DistrictBase
     activities: List[ItineraryActivityBase]
     hotels_and_restaurants: List[ItineraryHotelRestaurantsBase]
@@ -166,7 +168,9 @@ class UserOut(BaseModel):
 
 
 class UserItineraryOut(BaseModel):
+    user_id: int
     id: int
+    user: UserOut
     itineraries: List[ItineraryOut]
 
 

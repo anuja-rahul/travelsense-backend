@@ -111,6 +111,95 @@ def delete_itinerary(id: int, db: Session = Depends(get_db), current_user: int =
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.post("/generate", response_model=schemas.UserItineraryOut)
-def generate_itinerary():
-    pass
+@router.get("/generate/{id}", response_model=schemas.UserItineraryOut)
+def generate_itinerary(id: int, db: Session = Depends(get_db),
+                       current_user: int = Depends(oauth2.get_current_user),
+                       duration: int = 2, budget: int = 2000, activities_per_day: int = 2):
+    meal_count = duration * 3
+    budget_per_day = budget / duration
+    total_activity = activities_per_day * duration
+    attraction_count, activity_count = utils.divide_into_two_parts(total_activity)
+
+    user = db.query(models.User).filter(current_user.id == models.User.id).first()
+
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"User with id: [{current_user.id}] does not exist")
+
+    district = db.query(models.District).filter(id == models.District.id).first()
+
+    if not district:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"District with id: [{id}] not found")
+
+    activities_data = db.query(models.Activity).filter(id == models.Activity.district_id).all()
+    attractions_data = db.query(models.Attraction).filter(id == models.Attraction.district_id).all()
+
+    if len(attractions_data) < attraction_count:
+        return HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail=f"Not enough attractions found")
+
+    if len(activities_data) < activity_count:
+        return HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail=f"Not enough activities found")
+
+    hotels_and_restaurant_data = db.query(models.HotelsAndRestaurant).filter(
+        id == models.HotelsAndRestaurant.district_id,
+        budget_per_day >= models.HotelsAndRestaurant.price).all()
+
+    if len(hotels_and_restaurant_data) < meal_count:
+        return HTTPException(status_code=status.HTTP_204_NO_CONTENT,
+                             detail=f"Not enough hotels and restaurants found within your parameters")
+
+    transportation_data = db.query(models.Transportation).filter(
+        id == models.Transportation.district_id).all()
+
+    hotel_ids = utils.generate_random_result(len(hotels_and_restaurant_data), meal_count)
+    activity_ids = utils.generate_random_result(len(activities_data), activity_count)
+    attraction_ids = utils.generate_random_result(len(attractions_data), attraction_count)
+
+    user_itinerary = models.UserItinerary(user_id=current_user.id)
+    db.add(user_itinerary)
+    db.commit()
+    db.refresh(user_itinerary)
+
+    itinerary = models.Itinerary(
+        user_itinerary_id=user_itinerary.id,
+        district_id=id
+    )
+
+    db.add(itinerary)
+    db.commit()
+    db.refresh(itinerary)
+
+    for ids in hotel_ids:
+        itinerary_hotel_restaurant = models.ItineraryHotelRestaurant(
+            itinerary_id=itinerary.id,
+            hotel_restaurant_id=hotels_and_restaurant_data[ids].id
+        )
+        db.add(itinerary_hotel_restaurant)
+
+    for ids in activity_ids:
+        itinerary_activity = models.ItineraryActivity(
+            itinerary_id=itinerary.id,
+            activity_id=activities_data[ids].id
+        )
+        db.add(itinerary_activity)
+
+    for ids in attraction_ids:
+        itinerary_attraction = models.ItineraryAttraction(
+            itinerary_id=itinerary.id,
+            attraction_id=attractions_data[ids].id
+        )
+        db.add(itinerary_attraction)
+
+    if len(transportation_data) != 0:
+        transportation_ids = utils.select_random_result(len(transportation_data))
+
+        for ids in transportation_ids:
+            itinerary_transportation = models.ItineraryTransportation(
+                itinerary_id=itinerary.id,
+                transportation_id=transportation_data[ids].id
+            )
+            db.add(itinerary_transportation)
+
+    db.commit()
+
+    return user_itinerary
