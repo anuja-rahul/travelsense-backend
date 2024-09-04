@@ -66,6 +66,7 @@ class HotelsAndRestaurant(Base):
     title = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+    price = Column(Numeric(10, 2), nullable=False, server_default="0.00")
     district = relationship("District")
 
     __table_args__ = (
@@ -79,11 +80,11 @@ class Transportation(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     district_id = Column(Integer, ForeignKey("districts.id", ondelete="CASCADE"), nullable=False)
     type = Column(String, nullable=False)
-    origin = Column(String, nullable=True)
-    destination = Column(String, nullable=True)
-    description = Column(String, nullable=True)
-    departure = Column(String, nullable=True)
-    arrival = Column(String, nullable=True)
+    origin = Column(String, nullable=True, server_default=text("Not specified"))
+    destination = Column(String, nullable=True, server_default=text("Not specified"))
+    description = Column(String, nullable=True, server_default=text("Not specified"))
+    departure = Column(String, nullable=True, server_default=text("Not specified"))
+    arrival = Column(String, nullable=True, server_default=text("Not specified"))
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
     district = relationship("District")
 
@@ -102,6 +103,7 @@ class Attraction(Base):
     description = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
     district = relationship("District")
+    price = Column(Numeric(10, 2), nullable=False, server_default="0.00")
 
     __table_args__ = (
         Index('idx_attraction_district_id', 'district_id'),

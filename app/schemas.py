@@ -68,6 +68,7 @@ class ActivityBase(BaseModel):
     title: str
     description: str
     created_at: datetime
+    district: DistrictBase
 
 
 class ItineraryActivityBase(BaseModel):
@@ -84,7 +85,9 @@ class HotelRestaurantBase(BaseModel):
     comfort: str
     title: str
     description: str
+    price: int
     created_at: datetime
+    district: DistrictBase
 
 
 class ItineraryHotelRestaurantsBase(BaseModel):
@@ -103,6 +106,7 @@ class TransportationBase(BaseModel):
     departure: Optional[str]
     arrival: Optional[str]
     created_at: datetime
+    district: DistrictBase
 
 
 class ItineraryTransportationBase(BaseModel):
@@ -118,6 +122,8 @@ class AttractionsBase(BaseModel):
     title: str
     description: str
     created_at: datetime
+    price: float
+    district: DistrictBase
 
 
 class ItineraryAttractionsBase(BaseModel):
@@ -135,6 +141,8 @@ class ItineraryBase(BaseModel):
 
 
 class ItineraryOut(ItineraryBase):
+    id: int
+    user_itinerary_id: int
     district: DistrictBase
     activities: List[ItineraryActivityBase]
     hotels_and_restaurants: List[ItineraryHotelRestaurantsBase]
@@ -160,7 +168,9 @@ class UserOut(BaseModel):
 
 
 class UserItineraryOut(BaseModel):
+    user_id: int
     id: int
+    user: UserOut
     itineraries: List[ItineraryOut]
 
 
@@ -195,6 +205,7 @@ class ActivityCreate(BaseModel):
 
 
 class ActivityOut(BaseModel):
+    id: int
     district_id: int
     title: str
     description: str
@@ -202,28 +213,72 @@ class ActivityOut(BaseModel):
     district: DistrictBase
 
 
+class HotelsAndRestaurantsOut(BaseModel):
+    id: int
+    district_id: int
+    type: str
+    cuisine: str
+    comfort: str
+    title: str
+    description: str
+    price: float
+    district: DistrictBase
+
+
 class HotelsAndRestaurantsCreate(BaseModel):
     district_id: int
     type: str
     cuisine: str
-    comfort: Literal["*", "**", "***", "****", "*****", "******", "*******"]
+    comfort: Literal["1", "2", "3", "4", "5"]
     title: str
     description: str
+    price: Optional[float] = 0.00
+
+
+class TransportationOut(BaseModel):
+    id: int
+    district_id: int
+    type: str
+    origin: str
+    destination: str
+    description: str
+    departure: str
+    arrival: str
+    district: DistrictBase
 
 
 class TransportationCreate(BaseModel):
     district_id: int
     type: Literal["Bus", "Threewheeler", "bicycle", "motorcycle", "car", "train", "boat"]
-    origin: Optional[str]
-    destination: Optional[str]
-    description: Optional[str]
-    departure: Optional[str]
-    arrival: Optional[str]
+    origin: Optional[str] = "Not specified"
+    destination: Optional[str] = "Not specified"
+    description: Optional[str] = "Not specified"
+    departure: Optional[str] = "Not specified"
+    arrival: Optional[str] = "Not specified"
 
 
-class AttractionsCreate(BaseModel):
+class AttractionOut(BaseModel):
+    id: int
     district_id: int
     type: str
     title: str
     description: str
+    price: float
+    district: DistrictBase
+
+
+class AttractionsCreate(BaseModel):
+    district_id: int
+    type: Optional[str] = "Not specified"
+    title: str
+    description: str
+    price: Optional[float] = 0.00
+
+
+class ItineraryCreate(BaseModel):
+    district_id: int
+    activity_id: Optional[List[int]] = None
+    hotels_restaurant_id: Optional[List[int]] = None
+    transportation_id: Optional[List[int]] = None
+    attraction_id: Optional[List[int]] = None
 
