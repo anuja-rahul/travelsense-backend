@@ -60,4 +60,4 @@ def generate_itineraryKESHAWA(budget, duration, diet_preference, activities):
     save_itinerary_to_database(itinerary)
     
     return itinerary
-#Ill take a look at the variables in this total code and make some changes, this is just from what ive written on paper
+#Ill take a look at the variables in this total code and make some changes, this is just from what ive written on paper...
