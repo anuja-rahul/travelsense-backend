@@ -2,10 +2,10 @@ from ..database import get_db
 from sqlalchemy.orm import Session
 from .. import models, schemas, utils, oauth2
 from fastapi import status, HTTPException, Depends, APIRouter, Response
-# from fastapi.security import APIKeyHeader
-# from ..config import settings
 from typing import List, Optional
 from sqlalchemy import or_
+# from fastapi.security import APIKeyHeader
+# from ..config import settings
 
 router = APIRouter(
     prefix="/itineraries",
