@@ -1,6 +1,6 @@
 from ..database import get_db
 from sqlalchemy.orm import Session
-from .. import models, schemas, utils, oauth2
+from .. import models, schemas
 from fastapi import status, HTTPException, Depends, APIRouter, Response
 from fastapi.security import APIKeyHeader
 from ..config import settings
