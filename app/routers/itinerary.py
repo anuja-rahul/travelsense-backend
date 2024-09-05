@@ -29,17 +29,18 @@ def get_itinerary(db: Session = Depends(get_db), current_user: int = Depends(oau
 
         query = (
             db.query(models.UserItinerary)
-            .join(models.Itinerary, models.UserItinerary.id == models.Itinerary.user_itinerary_id)
-            .join(models.District, models.Itinerary.district_id == models.District.id)
-            .join(models.ItineraryActivity, models.ItineraryActivity.itinerary_id == models.Itinerary.id)
-            .join(models.Activity, models.ItineraryActivity.activity_id == models.Activity.id)
-            .join(models.ItineraryAttraction, models.ItineraryAttraction.itinerary_id == models.Itinerary.id)
-            .join(models.Attraction, models.ItineraryAttraction.attraction_id == models.Attraction.id)
-            .join(models.ItineraryHotelRestaurant, models.ItineraryHotelRestaurant.itinerary_id == models.Itinerary.id)
-            .join(models.HotelsAndRestaurant,
-                  models.ItineraryHotelRestaurant.hotel_restaurant_id == models.HotelsAndRestaurant.id)
-            .join(models.ItineraryTransportation, models.ItineraryTransportation.itinerary_id == models.Itinerary.id)
-            .join(models.Transportation, models.ItineraryTransportation.transportation_id == models.Transportation.id)
+            # .join(models.Itinerary, models.UserItinerary.id == models.Itinerary.user_itinerary_id)
+            # .join(models.District, models.Itinerary.district_id == models.District.id)
+            # .join(models.ItineraryActivity, models.ItineraryActivity.itinerary_id == models.Itinerary.id)
+            # .join(models.Activity, models.ItineraryActivity.activity_id == models.Activity.id)
+            # .join(models.ItineraryAttraction, models.ItineraryAttraction.itinerary_id == models.Itinerary.id)
+            # .join(models.Attraction, models.ItineraryAttraction.attraction_id == models.Attraction.id)
+            # .join(models.ItineraryHotelRestaurant,
+            # models.ItineraryHotelRestaurant.itinerary_id == models.Itinerary.id)
+            # .join(models.HotelsAndRestaurant,
+            #       models.ItineraryHotelRestaurant.hotel_restaurant_id == models.HotelsAndRestaurant.id)
+            # .join(models.ItineraryTransportation, models.ItineraryTransportation.itinerary_id == models.Itinerary.id)
+            # .join(models.Transportation, models.ItineraryTransportation.transportation_id == models.Transportation.id)
             .filter(models.UserItinerary.user_id == current_user.id)
             .filter(
                 or_(
