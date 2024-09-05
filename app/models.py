@@ -16,6 +16,29 @@ class Category(Base):
     admin = relationship("Admin")
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String, nullable=False)
+    email = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
+    verified = Column(Boolean, nullable=False, server_default="False")
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+
+    itineraries = relationship("UserItinerary", back_populates="user")
+
+
+class UserItinerary(Base):
+    __tablename__ = "user_itineraries"
+
+    id = Column(Integer, nullable=False, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    user = relationship("User", back_populates="itineraries")
+    itineraries = relationship("Itinerary", back_populates="user_itinerary")
+
+
 class Province(Base):
     __tablename__ = 'provinces'
 
@@ -108,29 +131,6 @@ class Attraction(Base):
     __table_args__ = (
         Index('idx_attraction_district_id', 'district_id'),
     )
-
-
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, nullable=False)
-    name = Column(String, nullable=False)
-    email = Column(String, nullable=False, unique=True)
-    password = Column(String, nullable=False)
-    verified = Column(Boolean, nullable=False, server_default="False")
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
-
-    itineraries = relationship("UserItinerary", back_populates="user")
-
-
-class UserItinerary(Base):
-    __tablename__ = "user_itineraries"
-
-    id = Column(Integer, nullable=False, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-
-    user = relationship("User", back_populates="itineraries")
-    itineraries = relationship("Itinerary", back_populates="user_itinerary")
 
 
 class Itinerary(Base):

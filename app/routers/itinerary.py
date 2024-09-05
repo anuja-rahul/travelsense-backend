@@ -1,10 +1,11 @@
 from ..database import get_db
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from .. import models, schemas, utils, oauth2
 from fastapi import status, HTTPException, Depends, APIRouter, Response
 from fastapi.security import APIKeyHeader
 from ..config import settings
-from typing import List
+from typing import List, Optional
+from sqlalchemy import or_
 
 router = APIRouter(
     prefix="/itineraries",
@@ -13,17 +14,59 @@ router = APIRouter(
 
 
 @router.get("/", response_model=List[schemas.UserItineraryOut])
-def get_itinerary(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def get_itinerary(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user),
+                  search: Optional[str] = ""):
+
     user = db.query(models.User).filter(current_user.id == models.User.id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"user with id: {current_user.id} was not found")
 
-    itineraries = db.query(models.UserItinerary).filter(current_user.id == models.UserItinerary.user_id).all()
+    itineraries_query = db.query(models.UserItinerary).filter(current_user.id == models.UserItinerary.user_id)
+    itineraries = itineraries_query.all()
+
+    if search:
+
+        query = (
+            db.query(models.UserItinerary)
+            .join(models.Itinerary, models.UserItinerary.id == models.Itinerary.user_itinerary_id)
+            .join(models.District, models.Itinerary.district_id == models.District.id)
+            .join(models.ItineraryActivity, models.ItineraryActivity.itinerary_id == models.Itinerary.id)
+            .join(models.Activity, models.ItineraryActivity.activity_id == models.Activity.id)
+            .join(models.ItineraryAttraction, models.ItineraryAttraction.itinerary_id == models.Itinerary.id)
+            .join(models.Attraction, models.ItineraryAttraction.attraction_id == models.Attraction.id)
+            .join(models.ItineraryHotelRestaurant, models.ItineraryHotelRestaurant.itinerary_id == models.Itinerary.id)
+            .join(models.HotelsAndRestaurant,
+                  models.ItineraryHotelRestaurant.hotel_restaurant_id == models.HotelsAndRestaurant.id)
+            .join(models.ItineraryTransportation, models.ItineraryTransportation.itinerary_id == models.Itinerary.id)
+            .join(models.Transportation, models.ItineraryTransportation.transportation_id == models.Transportation.id)
+            .filter(models.UserItinerary.user_id == current_user.id)
+            .filter(
+                or_(
+                    models.District.title.like(f"%{search}%"),
+                    models.District.description.like(f"%{search}%"),
+                    models.Activity.title.like(f"%{search}%"),
+                    models.Activity.description.like(f"%{search}%"),
+                    models.Attraction.title.like(f"%{search}%"),
+                    models.Attraction.description.like(f"%{search}%"),
+                    models.HotelsAndRestaurant.title.like(f"%{search}%"),
+                    models.HotelsAndRestaurant.description.like(f"%{search}%"),
+                    models.Transportation.type.like(f"%{search}%"),
+                    models.Transportation.description.like(f"%{search}%"),
+                    models.Transportation.destination.like(f"%{search}%"),
+                    models.Transportation.origin.like(f"%{search}%")
+                )
+            )
+        )
+
+        # Print query for debugging
+        # print(str(query))
+
+        itineraries = query.all()
 
     if not itineraries:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"This user has no itineraries.")
+                            detail=f"This user has no such itineraries.")
 
     return itineraries
 
