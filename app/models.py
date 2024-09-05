@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, PrimaryKeyConstraint, Numeric, Index
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Numeric, Index
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
 from sqlalchemy.orm import relationship
