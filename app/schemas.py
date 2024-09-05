@@ -51,6 +51,7 @@ class ProvinceBase(BaseModel):
     id: int
     title: str
     description: str
+    image_url: Optional[str] = None
     created_at: datetime
 
 
@@ -59,6 +60,7 @@ class DistrictBase(BaseModel):
     province_id: int
     title: str
     description: str
+    image_url: Optional[str] = None
     created_at: datetime
     province: ProvinceBase
 
@@ -190,18 +192,21 @@ class EntryBase(BaseModel):
 class ProvinceCreate(BaseModel):
     title: str
     description: str
+    image_url: Optional[str] = None
 
 
 class DistrictCreate(BaseModel):
     province_id: int
     title: str
     description: str
+    image_url: Optional[str] = None
 
 
 class ActivityCreate(BaseModel):
     district_id: int
     title: str
     description: str
+    image_url: Optional[str] = None
 
 
 class ActivityOut(BaseModel):
@@ -209,6 +214,7 @@ class ActivityOut(BaseModel):
     district_id: int
     title: str
     description: str
+    image_url: Optional[str] = None
     created_at: datetime
     district: DistrictBase
 
@@ -222,6 +228,7 @@ class HotelsAndRestaurantsOut(BaseModel):
     title: str
     description: str
     price: float
+    image_url: Optional[str] = None
     district: DistrictBase
 
 
@@ -233,6 +240,7 @@ class HotelsAndRestaurantsCreate(BaseModel):
     title: str
     description: str
     price: Optional[float] = 0.00
+    image_url: Optional[str] = None
 
 
 class TransportationOut(BaseModel):
@@ -244,6 +252,7 @@ class TransportationOut(BaseModel):
     description: str
     departure: str
     arrival: str
+    image_url: Optional[str] = None
     district: DistrictBase
 
 
@@ -255,6 +264,7 @@ class TransportationCreate(BaseModel):
     description: Optional[str] = "Not specified"
     departure: Optional[str] = "Not specified"
     arrival: Optional[str] = "Not specified"
+    image_url: Optional[str] = None
 
 
 class AttractionOut(BaseModel):
@@ -264,6 +274,7 @@ class AttractionOut(BaseModel):
     title: str
     description: str
     price: float
+    image_url: Optional[str] = None
     district: DistrictBase
 
 
@@ -273,6 +284,7 @@ class AttractionsCreate(BaseModel):
     title: str
     description: str
     price: Optional[float] = 0.00
+    image_url: Optional[str] = None
 
 
 class ItineraryCreate(BaseModel):

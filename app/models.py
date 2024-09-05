@@ -13,6 +13,7 @@ class Category(Base):
     description = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
     added_by = Column(Integer, ForeignKey("admins.id"), nullable=False, server_default="1")
+    image_url = Column(String, nullable=True)
     admin = relationship("Admin")
 
 
@@ -45,6 +46,7 @@ class Province(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     title = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=False)
+    image_url = Column(String, nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
 
 
@@ -55,6 +57,7 @@ class District(Base):
     province_id = Column(Integer, ForeignKey("provinces.id", ondelete="CASCADE"), nullable=False)
     title = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=False)
+    image_url = Column(String, nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
     province = relationship("Province")
 
@@ -70,6 +73,7 @@ class Activity(Base):
     district_id = Column(Integer, ForeignKey("districts.id", ondelete="CASCADE"), nullable=False)
     title = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=False)
+    image_url = Column(String, nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
     district = relationship("District")
 
@@ -88,6 +92,7 @@ class HotelsAndRestaurant(Base):
     comfort = Column(String, nullable=True)
     title = Column(String, nullable=False, unique=True)
     description = Column(String, nullable=False)
+    image_url = Column(String, nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
     price = Column(Numeric(10, 2), nullable=False, server_default="0.00")
     district = relationship("District")
@@ -108,6 +113,7 @@ class Transportation(Base):
     description = Column(String, nullable=True, server_default=text("Not specified"))
     departure = Column(String, nullable=True, server_default=text("Not specified"))
     arrival = Column(String, nullable=True, server_default=text("Not specified"))
+    image_url = Column(String, nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
     district = relationship("District")
 
@@ -124,6 +130,7 @@ class Attraction(Base):
     type = Column(String, nullable=False)
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
+    image_url = Column(String, nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
     district = relationship("District")
     price = Column(Numeric(10, 2), nullable=False, server_default="0.00")
