@@ -294,3 +294,13 @@ class ItineraryCreate(BaseModel):
     transportation_id: Optional[List[int]] = None
     attraction_id: Optional[List[int]] = None
 
+
+class VerificationBase(BaseModel):
+    id: int
+    code: str
+    user: UserOut
+
+
+class VerificationCheck(BaseModel):
+    code: str
+

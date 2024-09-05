@@ -77,3 +77,4 @@ def update_user(updated_user: schemas.UserUpdate, db: Session = Depends(get_db),
     db.commit()
     return user_query.first()
 
+
