@@ -30,6 +30,15 @@ class User(Base):
     itineraries = relationship("UserItinerary", back_populates="user")
 
 
+class UserVerification(Base):
+    __tablename__ = "user_verification"
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    code = Column(String, nullable=False)
+    user = relationship("User")
+
+
 class UserItinerary(Base):
     __tablename__ = "user_itineraries"
 
