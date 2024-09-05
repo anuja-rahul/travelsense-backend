@@ -39,7 +39,8 @@ def get_itinerary(db: Session = Depends(get_db), current_user: int = Depends(oau
             .join(models.HotelsAndRestaurant,
                   models.ItineraryHotelRestaurant.hotel_restaurant_id == models.HotelsAndRestaurant.id)
             .join(models.ItineraryTransportation, models.ItineraryTransportation.itinerary_id == models.Itinerary.id)
-            .join(models.Transportation, models.ItineraryTransportation.transportation_id == models.Transportation.id)     .filter(models.UserItinerary.user_id == current_user.id)
+            .join(models.Transportation, models.ItineraryTransportation.transportation_id == models.Transportation.id)
+            .filter(models.UserItinerary.user_id == current_user.id)
             .filter(
                 or_(
                     models.District.title.like(f"%{search}%"),
