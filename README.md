@@ -36,129 +36,141 @@
 
 erDiagram
     Category {
-        Integer id PK
-        String title
-        String description
-        TIMESTAMP created_at
-        Integer added_by FK
+        int id PK
+        string title
+        string description
+        string image_url
+        timestamp created_at
+        int added_by FK
     }
     Admin {
-        Integer id PK
-        String name
-        String email
-        String password
-        TIMESTAMP created_at
+        int id PK
+        string name
+        string email
+        string password
+        string image_url
+        timestamp created_at
     }
     Province {
-        Integer id PK
-        String title
-        String description
-        TIMESTAMP created_at
+        int id PK
+        string title
+        string description
+        string image_url
+        timestamp created_at
     }
     District {
-        Integer id PK
-        Integer province_id FK
-        String title
-        String description
-        TIMESTAMP created_at
+        int id PK
+        int province_id FK
+        string title
+        string description
+        string image_url
+        timestamp created_at
     }
     Activity {
-        Integer id PK
-        Integer district_id FK
-        String title
-        String description
-        TIMESTAMP created_at
+        int id PK
+        int district_id FK
+        string title
+        string description
+        string image_url
+        timestamp created_at
     }
     HotelsAndRestaurant {
-        Integer id PK
-        Integer district_id FK
-        String type
-        String cuisine
-        String comfort
-        String title
-        String description
-        TIMESTAMP created_at
+        int id PK
+        int district_id FK
+        string type
+        string cuisine
+        string comfort
+        string title
+        string description
+        string image_url
+        timestamp created_at
     }
     Transportation {
-        Integer id PK
-        Integer district_id FK
-        String type
-        String origin
-        String destination
-        String description
-        String departure
-        String arrival
-        TIMESTAMP created_at
+        int id PK
+        int district_id FK
+        string type
+        string origin
+        string destination
+        string description
+        string departure
+        string arrival
+        string image_url
+        timestamp created_at
     }
     Attraction {
-        Integer id PK
-        Integer district_id FK
-        String type
-        String title
-        String description
-        TIMESTAMP created_at
+        int id PK
+        int district_id FK
+        string type
+        string title
+        string description
+        string image_url
+        timestamp created_at
     }
     User {
-        Integer id PK
-        String name
-        String email
-        String password
-        Boolean verified
-        TIMESTAMP created_at
+        int id PK
+        string name
+        string email
+        string password
+        boolean verified
+        string image_url
+        timestamp created_at
+    }
+    UserVerification {
+        int id PK
+        int user_id FK
+        string verification_code
+        timestamp expires_at
+        timestamp verified_at
+        timestamp created_at
     }
     UserItinerary {
-        Integer id PK
-        Integer user_id FK
+        int id PK
+        int user_id FK
     }
     Itinerary {
-        Integer id PK
-        Integer user_itinerary_id FK
-        Integer district_id FK
-        TIMESTAMP created_at
+        int id PK
+        int user_itinerary_id FK
+        int district_id FK
+        timestamp created_at
     }
     ItineraryActivity {
-        Integer id PK
-        Integer itinerary_id FK
-        Integer activity_id FK
+        int id PK
+        int itinerary_id FK
+        int activity_id FK
     }
     ItineraryHotelRestaurant {
-        Integer id PK
-        Integer itinerary_id FK
-        Integer hotel_restaurant_id FK
+        int id PK
+        int itinerary_id FK
+        int hotel_restaurant_id FK
     }
     ItineraryTransportation {
-        Integer id PK
-        Integer itinerary_id FK
-        Integer transportation_id FK
+        int id PK
+        int itinerary_id FK
+        int transportation_id FK
     }
     ItineraryAttraction {
-        Integer id PK
-        Integer itinerary_id FK
-        Integer attraction_id FK
+        int id PK
+        int itinerary_id FK
+        int attraction_id FK
     }
 
-    Category ||--o| Admin : added_by
-    Province ||--o| District : has
-    District ||--o| Activity : has
-    District ||--o| HotelsAndRestaurant : has
-    District ||--o| Transportation : has
-    District ||--o| Attraction : has
-    Activity ||--o| District : belongs_to
-    HotelsAndRestaurant ||--o| District : belongs_to
-    Transportation ||--o| District : belongs_to
-    Attraction ||--o| District : belongs_to
-    User ||--o| UserItinerary : has
-    UserItinerary ||--o| Itinerary : includes
-    Itinerary ||--o| District : belongs_to
-    Itinerary ||--o| UserItinerary : linked_to
-    ItineraryActivity ||--o| Itinerary : includes
-    ItineraryActivity ||--o| Activity : includes
-    ItineraryHotelRestaurant ||--o| Itinerary : includes
-    ItineraryHotelRestaurant ||--o| HotelsAndRestaurant : includes
-    ItineraryTransportation ||--o| Itinerary : includes
-    ItineraryTransportation ||--o| Transportation : includes
-    ItineraryAttraction ||--o| Itinerary : includes
-    ItineraryAttraction ||--o| Attraction : includes
+    Category ||--o{ Admin: "added_by"
+    Province ||--o{ District: "province_id"
+    District ||--o{ Activity: "district_id"
+    District ||--o{ HotelsAndRestaurant: "district_id"
+    District ||--o{ Transportation: "district_id"
+    District ||--o{ Attraction: "district_id"
+    User ||--o{ UserItinerary: "user_id"
+    User ||--o{ UserVerification: "user_id"
+    UserItinerary ||--o{ Itinerary: "user_itinerary_id"
+    Itinerary ||--o{ ItineraryActivity: "itinerary_id"
+    Itinerary ||--o{ ItineraryHotelRestaurant: "itinerary_id"
+    Itinerary ||--o{ ItineraryTransportation: "itinerary_id"
+    Itinerary ||--o{ ItineraryAttraction: "itinerary_id"
+    Activity ||--o{ ItineraryActivity: "activity_id"
+    HotelsAndRestaurant ||--o{ ItineraryHotelRestaurant: "hotel_restaurant_id"
+    Transportation ||--o{ ItineraryTransportation: "transportation_id"
+    Attraction ||--o{ ItineraryAttraction: "attraction_id"
 
 ```
 
@@ -172,6 +184,7 @@ erDiagram
   - `id`: Integer (Primary Key)
   - `title`: String
   - `description`: String
+  - `image_url`: String (URL to the image associated with the category)
   - `created_at`: TIMESTAMP
   - `added_by`: Integer (Foreign Key to `Admin`)
 - **Relationships**: 
@@ -183,6 +196,7 @@ erDiagram
   - `id`: Integer (Primary Key)
   - `title`: String
   - `description`: String
+  - `image_url`: String (URL to the image associated with the province)
   - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Has many `Districts`.
@@ -194,6 +208,7 @@ erDiagram
   - `province_id`: Integer (Foreign Key to `Province`)
   - `title`: String
   - `description`: String
+  - `image_url`: String (URL to the image associated with the district)
   - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `Province` (each district belongs to one province).
@@ -206,6 +221,7 @@ erDiagram
   - `district_id`: Integer (Foreign Key to `District`)
   - `title`: String
   - `description`: String
+  - `image_url`: String (URL to the image associated with the activity)
   - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each activity is in one district).
@@ -221,6 +237,7 @@ erDiagram
   - `comfort`: String
   - `title`: String
   - `description`: String
+  - `image_url`: String (URL to the image associated with the hotel or restaurant)
   - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each hotel/restaurant is in one district).
@@ -237,6 +254,7 @@ erDiagram
   - `description`: String
   - `departure`: String
   - `arrival`: String
+  - `image_url`: String (URL to the image associated with the transportation)
   - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each transportation option is in one district).
@@ -250,6 +268,7 @@ erDiagram
   - `type`: String
   - `title`: String
   - `description`: String
+  - `image_url`: String (URL to the image associated with the attraction)
   - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each attraction is in one district).
@@ -263,9 +282,23 @@ erDiagram
   - `email`: String
   - `password`: String
   - `verified`: Boolean
+  - `image_url`: String (URL to the user's profile image)
   - `created_at`: TIMESTAMP
 - **Relationships**: 
-  - Can have `UserItineraries` (if you choose to implement user-specific itineraries).
+  - Can have `UserItineraries`.
+  - Can have `UserVerification` records.
+
+### **UserVerification**
+- **Purpose**: Represents verification codes sent to users for account verification.
+- **Fields**:
+  - `id`: Integer (Primary Key)
+  - `user_id`: Integer (Foreign Key to `User`)
+  - `verification_code`: String (Verification code sent to the user)
+  - `expires_at`: TIMESTAMP (When the code expires)
+  - `verified_at`: TIMESTAMP (When the user was verified, nullable)
+  - `created_at`: TIMESTAMP
+- **Relationships**:
+  - Linked to `User` (each verification record is for one user).
 
 ### **UserItinerary**
 - **Purpose**: Links users to itineraries, allowing users to have personal itineraries.
@@ -282,6 +315,7 @@ erDiagram
   - `id`: Integer (Primary Key)
   - `user_itinerary_id`: Integer (Foreign Key to `UserItinerary`)
   - `district_id`: Integer (Foreign Key to `District`)
+  - `image_url`: String (URL to an image representing the itinerary)
   - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Linked to `District` (each itinerary is for one district).
@@ -335,6 +369,8 @@ erDiagram
   - `name`: String
   - `email`: String
   - `password`: String
+  - `image_url`: String (URL to the admin's profile image)
   - `created_at`: TIMESTAMP
 - **Relationships**: 
   - Can manage `Categories` and `Itineraries`.
+
